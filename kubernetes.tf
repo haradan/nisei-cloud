@@ -15,6 +15,11 @@ variable "kubernetes_node_size" {
   type        = string
   default     = "s-1vcpu-2gb"
 }
+variable "kubernetes_node_count" {
+  description = "Number of nodes in the Kubernetes cluster"
+  type        = number
+  default     = 1
+}
 
 data "digitalocean_kubernetes_versions" "this" {
   version_prefix = "1.21."
@@ -28,6 +33,6 @@ resource "digitalocean_kubernetes_cluster" "this" {
   node_pool {
     name       = "default"
     size       = var.kubernetes_node_size
-    node_count = 1
+    node_count = var.kubernetes_node_count
   }
 }
