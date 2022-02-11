@@ -1,9 +1,3 @@
-variable "environment_name" {
-  description = "Name of the environment the cluster is for"
-  type        = string
-  default     = "dev"
-}
-
 # Look up slug identifiers here: https://slugs.do-api.dev/
 variable "digitalocean_region" {
   description = "Slug identifier for the DigitalOcean region to deploy to"
@@ -26,7 +20,7 @@ data "digitalocean_kubernetes_versions" "this" {
 }
 
 resource "digitalocean_kubernetes_cluster" "this" {
-  name         = "nisei-cloud-${var.environment_name}"
+  name         = local.deployment_name
   region       = var.digitalocean_region
   auto_upgrade = true
   version      = data.digitalocean_kubernetes_versions.this.latest_version
@@ -35,4 +29,39 @@ resource "digitalocean_kubernetes_cluster" "this" {
     size       = var.kubernetes_node_size
     node_count = var.kubernetes_node_count
   }
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = digitalocean_kubernetes_cluster.this.endpoint
+    client_certificate     = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.client_certificate)
+    client_key             = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.client_key)
+    cluster_ca_certificate = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.cluster_ca_certificate)
+  }
+}
+
+resource "digitalocean_firewall" "kubernetes" {
+  name = local.deployment_name
+  tags = ["k8s:${digitalocean_kubernetes_cluster.this.id}"]
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "80"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "443"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+}
+
+resource "helm_release" "nginx_ingress" {
+  name       = "nginx-ingress-controller"
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "nginx-ingress-controller"
+  version    = "1.1.1"
+  values = [
+    file("helm-values/nginx-ingress.yaml")
+  ]
 }
