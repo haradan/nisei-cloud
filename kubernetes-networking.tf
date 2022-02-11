@@ -57,9 +57,9 @@ resource "helm_release" "cert_manager" {
 }
 
 resource "kubernetes_manifest" "letsencrypt_staging_issuer" {
-  manifest = yamldecode(file("kubernetes-resources/letsencrypt-staging-issuer.yaml"))
+  manifest = yamldecode(file("kubernetes-manifests/letsencrypt-staging-issuer.yaml"))
 }
 
 resource "kubernetes_manifest" "letsencrypt_prod_issuer" {
-  manifest = yamldecode(file("kubernetes-resources/letsencrypt-prod-issuer.yaml"))
+  manifest = yamldecode(file("kubernetes-manifests/letsencrypt-prod-issuer.yaml"))
 }
