@@ -56,6 +56,7 @@ resource "helm_release" "cert_manager" {
   create_namespace = true
 }
 
+# https://cert-manager.io/docs/tutorials/acme/nginx-ingress/#step-6-configure-let-s-encrypt-issuer
 resource "kubernetes_manifest" "letsencrypt_staging_issuer" {
   manifest = yamldecode(file("kubernetes-manifests/letsencrypt-staging-issuer.yaml"))
 }
