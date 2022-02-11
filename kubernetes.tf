@@ -25,12 +25,17 @@ data "digitalocean_sizes" "this" {
 }
 
 resource "digitalocean_kubernetes_cluster" "this" {
-  name         = "nisei-cloud-" + var.environment_name
+  name         = "nisei-cloud-${var.environment_name}"
   region       = var.digitalocean_region
   auto_upgrade = true
   version      = data.digitalocean_kubernetes_versions.this.latest_version
   node_pool {
-    name = "default"
-    size = element(data.digitalocean_sizes.this.sizes, 0).slug
+    name       = "default"
+    size       = element(data.digitalocean_sizes.this.sizes, 0).slug
+    node_count = 1
   }
+}
+
+output "available_sizes" {
+  value = jsonencode(data.digitalocean_sizes.this.sizes)
 }
