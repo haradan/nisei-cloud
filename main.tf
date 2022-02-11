@@ -20,15 +20,12 @@ terraform {
   }
 }
 
-resource "random_pet" "test" {}
-
-output "test-pet" {
-  value = random_pet.test.id
+variable "digitalocean_token" {
+  description = "Access token for DigitalOcean"
+  type        = string
+  sensitive   = true
 }
 
-data "digitalocean_projects" "this" {
-}
-
-output "digitalocean-projects" {
-  value = jsonencode(data.digitalocean_projects.this.projects)
+provider "digitalocean" {
+  token = var.digitalocean_token
 }

@@ -9,7 +9,7 @@ jobs:
     name: "Terraform"
     runs-on: ubuntu-latest
     env:
-      DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      TF_VAR_digitalocean_token: ${{ secrets.DIGITALOCEAN_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -41,7 +41,7 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init -input=false
-      
+
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
