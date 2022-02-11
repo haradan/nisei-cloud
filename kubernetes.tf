@@ -4,25 +4,20 @@ variable "environment_name" {
   default     = "dev"
 }
 
+# Look up slug identifiers here: https://slugs.do-api.dev/
 variable "digitalocean_region" {
   description = "Slug identifier for the DigitalOcean region to deploy to"
   type        = string
   default     = "lon1"
 }
+variable "kubernetes_node_size" {
+  description = "Slug identifier for the DigitalOcean droplet size to use for Kubernetes nodes"
+  type        = string
+  default     = "s-1vcpu-2gb"
+}
 
 data "digitalocean_kubernetes_versions" "this" {
   version_prefix = "1.21."
-}
-
-data "digitalocean_sizes" "this" {
-  filter {
-    key    = "regions"
-    values = [var.digitalocean_region]
-  }
-  sort {
-    key       = "price_monthly"
-    direction = "asc"
-  }
 }
 
 resource "digitalocean_kubernetes_cluster" "this" {
@@ -32,11 +27,7 @@ resource "digitalocean_kubernetes_cluster" "this" {
   version      = data.digitalocean_kubernetes_versions.this.latest_version
   node_pool {
     name       = "default"
-    size       = element(data.digitalocean_sizes.this.sizes, 0).slug
+    size       = var.kubernetes_node_size
     node_count = 1
   }
-}
-
-output "available_sizes" {
-  value = jsonencode(data.digitalocean_sizes.this.sizes)
 }
