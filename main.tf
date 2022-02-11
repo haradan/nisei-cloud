@@ -5,7 +5,7 @@ terraform {
       version = "3.0.1"
     }
     digitalocean = {
-      source = "digitalocean/digitalocean"
+      source  = "digitalocean/digitalocean"
       version = "2.17.1"
     }
   }
