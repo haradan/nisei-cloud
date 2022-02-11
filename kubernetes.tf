@@ -33,49 +33,20 @@ resource "digitalocean_kubernetes_cluster" "this" {
 
 locals {
   k8s_host                   = digitalocean_kubernetes_cluster.this.endpoint
-  k8s_client_certificate     = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.client_certificate)
-  k8s_client_key             = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.client_key)
+  k8s_token                  = digitalocean_kubernetes_cluster.this.kube_config.0.token
   k8s_cluster_ca_certificate = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.cluster_ca_certificate)
 }
 
 provider "kubernetes" {
   host                   = local.k8s_host
-  client_certificate     = local.k8s_client_certificate
-  client_key             = local.k8s_client_key
+  token                  = local.k8s_token
   cluster_ca_certificate = local.k8s_cluster_ca_certificate
 }
 
 provider "helm" {
   kubernetes {
     host                   = local.k8s_host
-    client_certificate     = local.k8s_client_certificate
-    client_key             = local.k8s_client_key
+    token                  = local.k8s_token
     cluster_ca_certificate = local.k8s_cluster_ca_certificate
   }
-}
-
-resource "digitalocean_firewall" "kubernetes" {
-  name = local.deployment_name
-  tags = ["k8s:${digitalocean_kubernetes_cluster.this.id}"]
-
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "80"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "443"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-}
-
-resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress-controller"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "nginx-ingress-controller"
-  version    = "9.1.5"
-  values = [
-    file("helm-values/nginx-ingress.yaml")
-  ]
 }
