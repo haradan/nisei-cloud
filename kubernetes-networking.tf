@@ -23,3 +23,17 @@ resource "helm_release" "nginx_ingress" {
     file("helm-values/nginx-ingress.yaml")
   ]
 }
+
+resource "helm_release" "external_dns" {
+  name       = "external-dns"
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "external-dns"
+  version    = "6.1.5"
+  values = [
+    file("helm-values/external-dns.yaml")
+  ]
+  set_sensitive {
+    name  = "digitalocean.apiToken"
+    value = var.digitalocean_token
+  }
+}
