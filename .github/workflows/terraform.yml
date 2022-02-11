@@ -12,6 +12,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Configure branch
+        id: branch
+        run: |
+          case "${{ github.ref }}" in
+          "refs/heads/main")
+            echo "::set-output name=make_plan::false"
+            echo "::set-output name=apply_changes::true"
+            ;;
+          *)
+            echo "::set-output name=make_plan::true"
+            echo "::set-output name=apply_changes::false"
+            ;;
+          esac
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -32,7 +46,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
+        if: github.event_name == 'pull_request' || steps.branch.outputs.make_plan == 'true'
         run: terraform plan -no-color
         continue-on-error: true
 
@@ -64,5 +78,5 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: steps.branch.outputs.apply_changes == 'true' && github.event_name == 'push'
         run: terraform apply -auto-approve
