@@ -55,3 +55,11 @@ resource "helm_release" "cert_manager" {
   namespace        = "cert-manager"
   create_namespace = true
 }
+
+resource "kubernetes_manifest" "letsencrypt_staging_issuer" {
+  manifest = yamldecode(file("kubernetes-resources/letsencrypt-staging-issuer.yaml"))
+}
+
+resource "kubernetes_manifest" "letsencrypt_prod_issuer" {
+  manifest = yamldecode(file("kubernetes-resources/letsencrypt-prod-issuer.yaml"))
+}
