@@ -31,12 +31,26 @@ resource "digitalocean_kubernetes_cluster" "this" {
   }
 }
 
+locals {
+  k8s_host                   = digitalocean_kubernetes_cluster.this.endpoint
+  k8s_client_certificate     = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.client_certificate)
+  k8s_client_key             = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.client_key)
+  k8s_cluster_ca_certificate = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.cluster_ca_certificate)
+}
+
+provider "kubernetes" {
+  host                   = local.k8s_host
+  client_certificate     = local.k8s_client_certificate
+  client_key             = local.k8s_client_key
+  cluster_ca_certificate = local.k8s_cluster_ca_certificate
+}
+
 provider "helm" {
   kubernetes {
-    host                   = digitalocean_kubernetes_cluster.this.endpoint
-    client_certificate     = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.client_certificate)
-    client_key             = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.client_key)
-    cluster_ca_certificate = base64decode(digitalocean_kubernetes_cluster.this.kube_config.0.cluster_ca_certificate)
+    host                   = local.k8s_host
+    client_certificate     = local.k8s_client_certificate
+    client_key             = local.k8s_client_key
+    cluster_ca_certificate = local.k8s_cluster_ca_certificate
   }
 }
 
