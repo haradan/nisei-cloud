@@ -52,4 +52,6 @@ resource "helm_release" "cert_manager" {
   values = [
     file("helm-values/cert-manager.yaml")
   ]
+  namespace        = "cert-manager"
+  create_namespace = true
 }
