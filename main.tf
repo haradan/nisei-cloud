@@ -26,9 +26,9 @@ output "test-pet" {
   value = random_pet.test.id
 }
 
-data "digitalocean_account" "this" {
+data "digitalocean_projects" "this" {
 }
 
-output "digitalocean-account-status" {
-  value = data.digitalocean_account.this.status
+output "digitalocean-projects" {
+  value = jsonencode(data.digitalocean_projects.this.projects)
 }
