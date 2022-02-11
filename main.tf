@@ -19,5 +19,5 @@ terraform {
 resource "random_pet" "test" {}
 
 output "test-pet" {
-  value = "${random_pet.test.id}"
+  value = random_pet.test.id
 }
