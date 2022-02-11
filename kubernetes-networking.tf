@@ -22,13 +22,14 @@ resource "helm_release" "nginx_ingress" {
   values = [
     file("helm-values/nginx-ingress.yaml")
   ]
+  timeout = 600
 }
 
 resource "helm_release" "external_dns" {
   name       = "external-dns"
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "external-dns"
-  version    = "6.1.5"
+  version    = "6.1.4"
   values = [
     file("helm-values/external-dns.yaml")
   ]
