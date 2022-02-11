@@ -60,7 +60,7 @@ resource "helm_release" "nginx_ingress" {
   name       = "nginx-ingress-controller"
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "nginx-ingress-controller"
-  version    = "1.1.1"
+  version    = "9.1.5"
   values = [
     file("helm-values/nginx-ingress.yaml")
   ]
