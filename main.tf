@@ -20,9 +20,6 @@ terraform {
   }
 }
 
-provider "digitalocean" {
-}
-
 resource "random_pet" "test" {}
 
 output "test-pet" {
