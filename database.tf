@@ -3,11 +3,12 @@ resource "random_password" "postgresql_admin_pwd" {
 }
 
 resource "helm_release" "postgresql" {
-  name       = "postgresql"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "postgresql"
-  version    = "11.0.2"
-  namespace  = "postgresql"
+  name             = "postgresql"
+  repository       = "https://charts.bitnami.com/bitnami"
+  chart            = "postgresql"
+  version          = "11.0.2"
+  namespace        = "postgresql"
+  create_namespace = true
   values = [
     file("helm-values/postgresql.yaml")
   ]
@@ -19,8 +20,9 @@ resource "helm_release" "postgresql" {
 
 resource "kubernetes_secret" "postgresql_admin" {
   metadata {
-    name      = "postgresql-admin"
-    namespace = "postgresql"
+    name             = "postgresql-admin"
+    namespace        = "postgresql"
+    create_namespace = true
   }
   data = {
     username = "postgres"

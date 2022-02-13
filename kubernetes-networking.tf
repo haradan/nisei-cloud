@@ -18,11 +18,12 @@ resource "digitalocean_firewall" "kubernetes" {
 }
 
 resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress-controller"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "nginx-ingress-controller"
-  version    = "9.1.5"
-  namespace  = "nginx"
+  name             = "nginx-ingress-controller"
+  repository       = "https://charts.bitnami.com/bitnami"
+  chart            = "nginx-ingress-controller"
+  version          = "9.1.5"
+  namespace        = "nginx"
+  create_namespace = true
   values = [
     file("helm-values/nginx-ingress.yaml")
   ]
@@ -31,11 +32,12 @@ resource "helm_release" "nginx_ingress" {
 
 # https://www.digitalocean.com/community/tutorials/how-to-automatically-manage-dns-records-from-digitalocean-kubernetes-using-externaldns
 resource "helm_release" "external_dns" {
-  name       = "external-dns"
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "external-dns"
-  version    = "6.1.4"
-  namespace  = "external-dns"
+  name             = "external-dns"
+  repository       = "https://charts.bitnami.com/bitnami"
+  chart            = "external-dns"
+  version          = "6.1.4"
+  namespace        = "external-dns"
+  create_namespace = true
   values = [
     file("helm-values/external-dns.yaml")
   ]
@@ -47,15 +49,15 @@ resource "helm_release" "external_dns" {
 
 # https://cert-manager.io/docs/installation/helm/
 resource "helm_release" "cert_manager" {
-  name       = "cert-manager"
-  repository = "https://charts.jetstack.io"
-  chart      = "cert-manager"
-  version    = "v1.7.1"
+  name             = "cert-manager"
+  repository       = "https://charts.jetstack.io"
+  chart            = "cert-manager"
+  version          = "v1.7.1"
+  namespace        = "cert-manager"
+  create_namespace = true
   values = [
     file("helm-values/cert-manager.yaml")
   ]
-  namespace        = "cert-manager"
-  create_namespace = true
 }
 
 # https://cert-manager.io/docs/tutorials/acme/nginx-ingress/#step-6-configure-let-s-encrypt-issuer
