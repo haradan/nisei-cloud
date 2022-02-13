@@ -20,9 +20,8 @@ resource "helm_release" "postgresql" {
 
 resource "kubernetes_secret" "postgresql_admin" {
   metadata {
-    name             = "postgresql-admin"
-    namespace        = "postgresql"
-    create_namespace = true
+    name      = "postgresql-admin"
+    namespace = "postgresql"
   }
   data = {
     username = "postgres"
