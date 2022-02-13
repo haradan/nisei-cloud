@@ -22,6 +22,7 @@ resource "helm_release" "nginx_ingress" {
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "nginx-ingress-controller"
   version    = "9.1.5"
+  namespace  = "nginx"
   values = [
     file("helm-values/nginx-ingress.yaml")
   ]
@@ -34,6 +35,7 @@ resource "helm_release" "external_dns" {
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "external-dns"
   version    = "6.1.4"
+  namespace  = "external-dns"
   values = [
     file("helm-values/external-dns.yaml")
   ]
