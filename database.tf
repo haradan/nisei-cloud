@@ -3,12 +3,11 @@ resource "random_password" "postgresql_admin_pwd" {
 }
 
 resource "helm_release" "postgresql" {
-  name             = "postgresql"
-  repository       = "https://charts.bitnami.com/bitnami"
-  chart            = "postgresql"
-  version          = "11.0.2"
-  namespace        = "postgresql"
-  create_namespace = true
+  name       = "postgresql"
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "postgresql"
+  version    = "11.0.2"
+  namespace  = "postgresql"
   values = [
     file("helm-values/postgresql.yaml")
   ]
