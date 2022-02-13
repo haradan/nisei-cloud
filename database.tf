@@ -13,7 +13,7 @@ resource "helm_release" "postgresql" {
   ]
   set {
     name  = "postgresqlPassword"
-    value = random_password.postgresql_admin_pwd
+    value = random_password.postgresql_admin_pwd.result
   }
 }
 
@@ -24,6 +24,6 @@ resource "kubernetes_secret" "postgresql_admin" {
   }
   data = {
     username = "postgres"
-    password = random_password.postgresql_admin_pwd
+    password = random_password.postgresql_admin_pwd.result
   }
 }
