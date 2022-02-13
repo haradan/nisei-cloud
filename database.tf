@@ -18,6 +18,12 @@ resource "helm_release" "postgresql" {
   }
 }
 
+resource "kubernetes_namespace" "postgresql" {
+  metadata {
+    name = "postgresql"
+  }
+}
+
 resource "kubernetes_secret" "postgresql_admin" {
   metadata {
     name      = "postgresql-admin"
